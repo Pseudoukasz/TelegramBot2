@@ -1,6 +1,7 @@
 package com.example.telegrambot2;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -15,13 +16,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TelegramApiService {
 
     public static final String QUERY_FOR_CITY_ID = "https://www.metaweather.com/api/location/search/?query=";
     public static final String QUERY_FOR_CITY_WEATHER_BY_ID = "https://www.metaweather.com/api/location/";
+    
     Context context;
     String cityId;
+    //2111456058:AAEzuJZ5NeneByBj5zcx7XfgruvEFaoZ6R8
+    //2109005971:AAEams-FpYZl6gzA49un5DodS6lQnN9JKFw
 
     public TelegramApiService(Context context) {
         this.context = context;
@@ -38,10 +43,10 @@ public class TelegramApiService {
         //RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         String url = "https://51.38.98.6/api/v1/first";
         String url2 = QUERY_FOR_CITY_ID + cityName;
-        String url3 = "https://51.38.98.6/api/v1/first";
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.i("Response", "Response: " + response.toString() );
                 cityId = "";
                 try {
                     JSONObject cityInfo = response.getJSONObject(0);
@@ -118,5 +123,122 @@ public class TelegramApiService {
     /*public List<WeatherReportModel> getCityForecastByName(String cityName) {
 
     }*/
+    public interface BotInfoInterface {
+        void onError(String message);
+
+        void onResponse(List<String> updates);
+    }
+
+
+    public void checkConnection(String endpoint, String token, BotInfoInterface botInfoInterface) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
+            ArrayList<String> info = new ArrayList<String>();
+            @Override
+            public void onResponse(JSONObject response) {
+
+                String botInfo = null;
+                try {
+                    botInfo = "Bot Id: " + response.getInt("id") +  System.getProperty("line.separator") +
+                            "First Name: " + response.getString("first_name") +  System.getProperty("line.separator") +
+                            "Username: " + response.getString("username");
+                    Toast.makeText(context, "Connected to: " + response.getString("username"), Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                info.add(botInfo);
+                //Toast.makeText(context, "response = " + response.toString(), Toast.LENGTH_LONG).show();
+                /*try {
+                    JSONObject cityInfo = response.getJSONObject(0);
+                    cityId = cityInfo.getString("woeid");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                //Toast.makeText(context, "City ID = " + cityId, Toast.LENGTH_LONG).show();
+                botInfoInterface.onResponse(info);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString() );
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                botInfoInterface.onError("Something wrong");
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+        //return cityId;
+    }
+    public interface UpdateList {
+        void onError(String message);
+
+        void onResponse(List<String> updates);
+    }
+
+    public void getUpdates(String endpoint, String token, UpdateList updateList) {
+// Instantiate the RequestQueue.
+        //RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
+        //Toast.makeText(context, "url = " + url2, Toast.LENGTH_LONG).show();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                ArrayList<String> updates = new ArrayList<String>();
+                //Toast.makeText(context, "response = " + response.toString(), Toast.LENGTH_LONG).show();
+                try {
+
+                    for (int i = 0; i<response.length(); i++) {
+                        JSONObject update = response.getJSONObject(i);
+                        updates.add(update.toString());
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //Toast.makeText(context, "City ID = " + cityId, Toast.LENGTH_LONG).show();
+                updateList.onResponse(updates);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString() );
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                updateList.onError("Something wrong");
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+        //return cityId;
+    }
+
+
+    public void getAllChats(String endpoint, String token, UpdateList allChatsList) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
+            ArrayList<String> info = new ArrayList<String>();
+            @Override
+            public void onResponse(JSONObject response) {
+                for (int i = 0; i < Objects.requireNonNull(response.names()).length(); i++ ) {
+                    try {
+                        String chat = response.names().getString(i);
+                        info.add(chat);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                allChatsList.onResponse(info);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString() );
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                allChatsList.onError("Something wrong");
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+        //return cityId;
+    }
 
 }

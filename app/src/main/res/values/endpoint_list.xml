@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="endpoint_list">
+        <item>Check connection</item>
+        <item>Get Updates</item>
+        <item>Get All Channels</item>
+        <item>Sand Message</item>
+        <item>Forward Message</item>
+        <item>Delete Message</item>
+        <item>Create Invite Link</item>
+        <item>Make Poll</item>
+    </string-array>
+
+
+</resources>
