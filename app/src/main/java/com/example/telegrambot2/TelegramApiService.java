@@ -265,7 +265,7 @@ public class TelegramApiService {
             @Override
             public void onResponse(JSONObject response) {
                 JSONObject responseChatMessage = null;
-                String responseMessage = "Message send to: ";
+                String responseMessage = "Message send to ";
 
                 try {
                     responseChatMessage = response.getJSONObject("chat");
@@ -286,7 +286,6 @@ public class TelegramApiService {
         });
         MySingleton.getInstance(context).addToRequestQueue(request);
 
-        //return cityId;
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.telegrambot2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,14 +14,18 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    Button button, button2, button3;
-    EditText token;
+    Button button, button2, button3, sendMessageButton;
+    EditText token, messageEditText;
     ListView responseListView;
-    Spinner spinnerEndpointList, chatList;
+    Spinner spinnerEndpointList, chatsListSpinner;
+    List<ChatModel> allChatsList = new ArrayList<>();
     final TelegramApiService telegramApiService = new TelegramApiService(MainActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +35,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //button = findViewById(R.id.button);
         //button2 = findViewById(R.id.button2);
         //button3 = findViewById(R.id.button3);
-        chatList = findViewById(R.id.chat_list);
+        chatsListSpinner = findViewById(R.id.chat_list);
+        messageEditText = findViewById(R.id.message);
         token = findViewById(R.id.method);
         responseListView = findViewById(R.id.response);
         spinnerEndpointList = findViewById(R.id.endpoint_list);
+        sendMessageButton = findViewById(R.id.sendMessageButton);
         spinnerEndpointList.setOnItemSelectedListener(this);
 
         String[] endpointsList = getResources().getStringArray(R.array.endpoint_list);
@@ -59,26 +66,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
             }
-        });
-        button2.setOnClickListener(new View.OnClickListener() {
+        });*/
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
-                telegramApiService.getCityForecastById(token.getText().toString(), new TelegramApiService.ForecastByIdResponse() {
+                ChatModel chat = (ChatModel) chatsListSpinner.getSelectedItem();
+                Toast.makeText(MainActivity.this, chat.getChatId() + ", " + chat.getTitle(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, allChatsList.get(chatNameIndex).getChatId(), Toast.LENGTH_LONG).show();
+                //Log.e("Response", "id: " + chatNameIndex + "chat: " + allChatsList.get(chatNameIndex).toString());
+                telegramApiService.sendMessage("sandMessage", token.getText().toString(), chat.getChatId(), messageEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(MainActivity.this, "wrong", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
-                    public void onResponse(List<WeatherReportModel> weatherReportModels) {
-                        //Toast.makeText(MainActivity.this, "Returned id = " + weatherReportModels.toString(), Toast.LENGTH_LONG).show();
-                        ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
-                        responseListView.setAdapter(arrayAdapter);
+                    public void onResponse(String response) {
+                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+
                     }
                 });
             }
         });
-        button3.setOnClickListener(new View.OnClickListener() {
+        /*button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "click3", Toast.LENGTH_SHORT).show();
@@ -129,10 +141,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 @Override
                 public void onResponse(List<ChatModel> allChats) {
-
-                    for (int i = 0; i < allChats.size(); i++) {
-
-                    }
+                    allChatsList = allChats;
                     //SpinnerAdapter
                     ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
                     responseListView.setAdapter(arrayAdapter);
@@ -140,7 +149,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
 
         } else if (spinnerValue.equals("Sand Message")) {
-            telegramApiService.sendMessage("sandMessage", token.getText().toString(), "111", "1111", new TelegramApiService.StringResponseListener() {
+            List<String> chatsSpinnerList = new ArrayList<String>();
+            for (int i = 0; i< allChatsList.size(); i++) {
+                chatsSpinnerList.add(allChatsList.get(i).getTitle());
+            }
+            ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
+            //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
+            chatsListSpinner.setAdapter(chatsAdapter);
+            messageEditText.setVisibility(View.VISIBLE);
+            chatsListSpinner.setVisibility(View.VISIBLE);
+            sendMessageButton.setVisibility(View.VISIBLE);
+
+
+            telegramApiService.sendMessage("sandMessage", token.getText().toString(), "-1001675185962", "1111", new TelegramApiService.StringResponseListener() {
                 @Override
                 public void onError(String message) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();

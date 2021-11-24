@@ -64,8 +64,6 @@ public class ChatModel {
 
     @Override
     public String toString() {
-        return "Chat Id: " + chat_id + '\'' +
-                ", Chat Name=" + title + '\'' +
-                ", Invite Link=" + invite_link;
+        return title;
     }
 }
