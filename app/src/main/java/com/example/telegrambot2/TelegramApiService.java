@@ -22,7 +22,7 @@ public class TelegramApiService {
 
     public static final String QUERY_FOR_CITY_ID = "https://www.metaweather.com/api/location/search/?query=";
     public static final String QUERY_FOR_CITY_WEATHER_BY_ID = "https://www.metaweather.com/api/location/";
-    
+    public static final String BASE_API_ADDRESS = "http://51.38.98.6/api/v1/";
     Context context;
     String cityId;
     //2111456058:AAEzuJZ5NeneByBj5zcx7XfgruvEFaoZ6R8
@@ -46,7 +46,7 @@ public class TelegramApiService {
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.i("Response", "Response: " + response.toString() );
+                Log.i("Response", "Response: " + response.toString());
                 cityId = "";
                 try {
                     JSONObject cityInfo = response.getJSONObject(0);
@@ -136,11 +136,10 @@ public class TelegramApiService {
             ArrayList<String> info = new ArrayList<String>();
             @Override
             public void onResponse(JSONObject response) {
-
                 String botInfo = null;
                 try {
-                    botInfo = "Bot Id: " + response.getInt("id") +  System.getProperty("line.separator") +
-                            "First Name: " + response.getString("first_name") +  System.getProperty("line.separator") +
+                    botInfo = "Bot Id: " + response.getInt("id") + System.getProperty("line.separator") +
+                            "First Name: " + response.getString("first_name") + System.getProperty("line.separator") +
                             "Username: " + response.getString("username");
                     Toast.makeText(context, "Connected to: " + response.getString("username"), Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
@@ -160,50 +159,93 @@ public class TelegramApiService {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Response", "Response error: " + error.toString() );
+                Log.e("Response", "Response error: " + error.toString());
                 Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                 botInfoInterface.onError("Something wrong");
             }
         });
         MySingleton.getInstance(context).addToRequestQueue(request);
-
-        //return cityId;
     }
+
     public interface UpdateList {
         void onError(String message);
 
-        void onResponse(List<String> updates);
+        void onResponse(List<UpdateModel> updates);
     }
 
     public void getUpdates(String endpoint, String token, UpdateList updateList) {
-// Instantiate the RequestQueue.
-        //RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
         //Toast.makeText(context, "url = " + url2, Toast.LENGTH_LONG).show();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                ArrayList<String> updates = new ArrayList<String>();
-                //Toast.makeText(context, "response = " + response.toString(), Toast.LENGTH_LONG).show();
-                try {
 
-                    for (int i = 0; i<response.length(); i++) {
+                List<UpdateModel> updates = new ArrayList<>();
+                try {
+                    for (int i = 0; i < response.length(); i++) {
                         JSONObject update = response.getJSONObject(i);
-                        updates.add(update.toString());
+                        UpdateModel updateModel = new UpdateModel();
+                        updateModel.setUpdateId(update.getInt("update_id"));
+                        updateModel.setMessageId(update.getJSONObject("channel_post").getInt("message_id"));
+                        updateModel.setChatTitle(update.getJSONObject("channel_post").getJSONObject("chat").getString("title"));
+                        updateModel.setChatUserName(update.getJSONObject("channel_post").getJSONObject("chat").getString("username"));
+                        updateModel.setChatId(update.getJSONObject("channel_post").getJSONObject("chat").getString("id"));
+                        updateModel.setDateTime(update.getJSONObject("channel_post").getInt("date"));
+                        updateModel.setText(update.getJSONObject("channel_post").getString("text"));
+                        updates.add(updateModel);
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //Toast.makeText(context, "City ID = " + cityId, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Updates count = " + updates.size(), Toast.LENGTH_SHORT).show();
                 updateList.onResponse(updates);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Response", "Response error: " + error.toString() );
+                Log.e("Response", "Response error: " + error.toString());
                 Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                 updateList.onError("Something wrong");
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public interface ChatsListInterface {
+        void onError(String message);
+
+        void onResponse(List<ChatModel> chatModelList);
+    }
+
+    public void getAllChats(String endpoint, String token, ChatsListInterface allChatsList) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                List<ChatModel> chatModels = new ArrayList<>();
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject chat = null;
+                        ChatModel chatModel = new ChatModel();
+                        chat = response.getJSONObject(i);
+                        chatModel.setChatId(chat.getString("id"));
+                        chatModel.setTitle(chat.getString("title"));
+                        chatModel.setUser_name(chat.getString("username"));
+                        chatModel.setInvite_link(chat.getString("invite_link"));
+                        chatModels.add(chatModel);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                allChatsList.onResponse(chatModels);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString());
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                allChatsList.onError("Something wrong: " + error.toString());
             }
         });
         MySingleton.getInstance(context).addToRequestQueue(request);
@@ -211,29 +253,35 @@ public class TelegramApiService {
         //return cityId;
     }
 
+    public interface StringResponseListener {
+        void onError(String message);
 
-    public void getAllChats(String endpoint, String token, UpdateList allChatsList) {
-        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
+        void onResponse(String message);
+    }
+
+    public void sendMessage(String endpoint, String token, String chatId, String message, StringResponseListener stringResponseListener) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token + "&chat_id=" + chatId + "&message=" + message;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
-            ArrayList<String> info = new ArrayList<String>();
             @Override
             public void onResponse(JSONObject response) {
-                for (int i = 0; i < Objects.requireNonNull(response.names()).length(); i++ ) {
-                    try {
-                        String chat = response.names().getString(i);
-                        info.add(chat);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                JSONObject responseChatMessage = null;
+                String responseMessage = "Message send to: ";
+
+                try {
+                    responseChatMessage = response.getJSONObject("chat");
+                    responseMessage += responseChatMessage.getString("title") + " chat";
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                allChatsList.onResponse(info);
+                stringResponseListener.onResponse(responseMessage);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Response", "Response error: " + error.toString() );
+                Log.e("Response", "Response error: " + error.toString());
                 Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
-                allChatsList.onError("Something wrong");
+                stringResponseListener.onError("Something wrong:" + error.toString());
             }
         });
         MySingleton.getInstance(context).addToRequestQueue(request);

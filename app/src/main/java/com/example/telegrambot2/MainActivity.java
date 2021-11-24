@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import java.util.List;
@@ -19,16 +20,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button button, button2, button3;
     EditText token;
     ListView responseListView;
-    Spinner spinnerEndpointList;
+    Spinner spinnerEndpointList, chatList;
     final TelegramApiService telegramApiService = new TelegramApiService(MainActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = findViewById(R.id.button);
-        button2 = findViewById(R.id.button2);
-        button3 = findViewById(R.id.button3);
+        //button = findViewById(R.id.button);
+        //button2 = findViewById(R.id.button2);
+        //button3 = findViewById(R.id.button3);
+        chatList = findViewById(R.id.chat_list);
         token = findViewById(R.id.method);
         responseListView = findViewById(R.id.response);
         spinnerEndpointList = findViewById(R.id.endpoint_list);
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEndpointList.setAdapter(adapter);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        /*button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "click3", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
     }
 
@@ -112,41 +114,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
                 @Override
-                public void onResponse(List<String> updatesList) {
-                    //Toast.makeText(MainActivity.this, "response = " + updatesList, Toast.LENGTH_LONG).show();
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
+                public void onResponse(List<UpdateModel> updatesList) {
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
                     responseListView.setAdapter(arrayAdapter);
                 }
             });
 
         } else if (spinnerValue.equals("Get All Channels")) {
-            telegramApiService.getUpdates("getAllChats", token.getText().toString(), new TelegramApiService.UpdateList() {
+            telegramApiService.getAllChats("getAllChats", token.getText().toString(), new TelegramApiService.ChatsListInterface() {
                 @Override
                 public void onError(String message) {
-                   // Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
+                   Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
-                public void onResponse(List<String> allChats) {
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
+                public void onResponse(List<ChatModel> allChats) {
+
+                    for (int i = 0; i < allChats.size(); i++) {
+
+                    }
+                    //SpinnerAdapter
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
                     responseListView.setAdapter(arrayAdapter);
                 }
             });
 
-        } /*else if (spinnerValue.equals("Sand Message")) {
-            telegramApiService.checkConnection("getUpdates", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
+        } else if (spinnerValue.equals("Sand Message")) {
+            telegramApiService.sendMessage("sandMessage", token.getText().toString(), "111", "1111", new TelegramApiService.StringResponseListener() {
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                 }
             });
 
-        } else if (spinnerValue.equals("Forward Message")) {
+        } /*else if (spinnerValue.equals("Forward Message")) {
             telegramApiService.checkConnection("forwardMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
                 @Override
                 public void onError(String message) {
