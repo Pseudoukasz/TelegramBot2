@@ -38,11 +38,11 @@ public class ChatModel {
         this.title = title;
     }
 
-    public String getUser_name() {
+    public String getUserName() {
         return user_name;
     }
 
-    public void setUser_name(String user_name) {
+    public void setUserName(String user_name) {
         this.user_name = user_name;
     }
 
@@ -54,11 +54,11 @@ public class ChatModel {
         this.type = type;
     }
 
-    public String getInvite_link() {
+    public String getInviteLink() {
         return invite_link;
     }
 
-    public void setInvite_link(String invite_link) {
+    public void setInviteLink(String invite_link) {
         this.invite_link = invite_link;
     }
 

@@ -101,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        messageEditText.setVisibility(View.GONE);
+        chatsListSpinner.setVisibility(View.GONE);
+        sendMessageButton.setVisibility(View.GONE);
 
         //Toast.makeText(MainActivity.this, "selected = " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
         String spinnerValue = parent.getItemAtPosition(position).toString();
@@ -140,8 +143,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
                 @Override
-                public void onResponse(List<ChatModel> allChats) {
-                    allChatsList = allChats;
+                public void onResponse(List<ChatShowModel> allChats) {
+                    for (int i=0; i<allChats.size(); i++) {
+                        allChatsList.add(allChats.get(i).getChatModel());
+                    }
+                    //allChatsList = allChats;
                     //SpinnerAdapter
                     ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
                     responseListView.setAdapter(arrayAdapter);
@@ -149,10 +155,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
 
         } else if (spinnerValue.equals("Sand Message")) {
-            List<String> chatsSpinnerList = new ArrayList<String>();
+            /*List<String> chatsSpinnerList = new ArrayList<String>();
             for (int i = 0; i< allChatsList.size(); i++) {
                 chatsSpinnerList.add(allChatsList.get(i).getTitle());
-            }
+            }*/
             ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
             //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
             chatsListSpinner.setAdapter(chatsAdapter);
@@ -161,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             sendMessageButton.setVisibility(View.VISIBLE);
 
 
-            telegramApiService.sendMessage("sandMessage", token.getText().toString(), "-1001675185962", "1111", new TelegramApiService.StringResponseListener() {
+           /* telegramApiService.sendMessage("sandMessage", token.getText().toString(), "-1001675185962", "1111", new TelegramApiService.StringResponseListener() {
                 @Override
                 public void onError(String message) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -171,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onResponse(String response) {
                     Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
 
         } /*else if (spinnerValue.equals("Forward Message")) {
             telegramApiService.checkConnection("forwardMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {

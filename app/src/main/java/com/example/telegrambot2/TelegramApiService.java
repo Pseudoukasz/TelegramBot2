@@ -215,7 +215,7 @@ public class TelegramApiService {
     public interface ChatsListInterface {
         void onError(String message);
 
-        void onResponse(List<ChatModel> chatModelList);
+        void onResponse(List<ChatShowModel> chatModelList);
     }
 
     public void getAllChats(String endpoint, String token, ChatsListInterface allChatsList) {
@@ -223,16 +223,16 @@ public class TelegramApiService {
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                List<ChatModel> chatModels = new ArrayList<>();
+                List<ChatShowModel> chatModels = new ArrayList<>();
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject chat = null;
-                        ChatModel chatModel = new ChatModel();
+                        ChatShowModel chatModel = new ChatShowModel();
                         chat = response.getJSONObject(i);
                         chatModel.setChatId(chat.getString("id"));
                         chatModel.setTitle(chat.getString("title"));
-                        chatModel.setUser_name(chat.getString("username"));
-                        chatModel.setInvite_link(chat.getString("invite_link"));
+                        chatModel.setUserName(chat.getString("username"));
+                        chatModel.setInviteLink(chat.getString("invite_link"));
                         chatModels.add(chatModel);
                     } catch (JSONException e) {
                         e.printStackTrace();
