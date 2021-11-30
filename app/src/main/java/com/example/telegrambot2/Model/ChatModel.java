@@ -1,4 +1,4 @@
-package com.example.telegrambot2;
+package com.example.telegrambot2.Model;
 
 public class ChatModel {
 

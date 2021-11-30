@@ -9,6 +9,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.telegrambot2.Model.ChatShowModel;
+import com.example.telegrambot2.Model.UpdateModel;
+import com.example.telegrambot2.Model.WeatherReportModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +19,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class TelegramApiService {
 

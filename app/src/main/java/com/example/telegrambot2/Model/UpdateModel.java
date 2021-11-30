@@ -1,4 +1,4 @@
-package com.example.telegrambot2;
+package com.example.telegrambot2.Model;
 
 public class UpdateModel {
 
@@ -85,8 +85,9 @@ public class UpdateModel {
 
     @Override
     public String toString() {
-        return "Chat Id: " + chat_id + '\'' +
-                ", Chat Name=" + chat_title + '\'' +
-                ", Invite Link=" ;
+        return "Chat Name=" + chat_title + System.getProperty("line.separator") +
+                "User name=" + chat_user_name + System.getProperty("line.separator") +
+                "Message=" + text + System.getProperty("line.separator") +
+                "Date=" + date_time;
     }
 }

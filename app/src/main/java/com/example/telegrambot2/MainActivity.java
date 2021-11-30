@@ -3,18 +3,20 @@ package com.example.telegrambot2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import com.example.telegrambot2.Model.ChatModel;
+import com.example.telegrambot2.Model.ChatShowModel;
+import com.example.telegrambot2.Model.UpdateModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +98,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText(MainActivity.this, "click3", Toast.LENGTH_SHORT).show();
             }
         });*/
+        //responseListView.setOnItemClickListener(new View.OnClickListener());
+
+        responseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int pos = parent.getPositionForView(view);
+                Toast.makeText(getApplicationContext(),pos+"",Toast.LENGTH_SHORT).show();
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(MainActivity.this, "click3", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+            }
+        });
 
     }
 
@@ -145,7 +166,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public void onResponse(List<ChatShowModel> allChats) {
                     for (int i=0; i<allChats.size(); i++) {
-                        allChatsList.add(allChats.get(i).getChatModel());
+                        ChatModel chatInfo = new ChatModel();
+                        chatInfo.setChatId(allChats.get(i).getChatId());
+                        chatInfo.setTitle(allChats.get(i).getTitle());
+                        chatInfo.setInviteLink(allChats.get(i).getInviteLink());
+                        allChatsList.add(chatInfo);
                     }
                     //allChatsList = allChats;
                     //SpinnerAdapter
@@ -257,4 +282,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
+
+
 }

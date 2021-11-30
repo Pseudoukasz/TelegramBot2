@@ -98,6 +98,7 @@
         android:layout_width="409dp"
         android:layout_height="632dp"
         android:layout_marginTop="8dp"
+        android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sendMessageButton" />
