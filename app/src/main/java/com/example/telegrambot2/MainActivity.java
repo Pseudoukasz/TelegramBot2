@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ListView responseListView;
     Spinner spinnerEndpointList, chatsListSpinner;
     List<ChatModel> allChatsList = new ArrayList<>();
+    List<UpdateModel> responseUpdatesList = new ArrayList<>();
     final TelegramApiService telegramApiService = new TelegramApiService(MainActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,14 +105,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int pos = parent.getPositionForView(view);
-                Toast.makeText(getApplicationContext(),pos+"",Toast.LENGTH_SHORT).show();
+                UpdateModel updateModel = responseUpdatesList.get(pos);
+                Toast.makeText(getApplicationContext(),pos+" " + updateModel.getText(),Toast.LENGTH_SHORT).show();
                 PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
                 popupMenu.show();
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(MainActivity.this, "click3", Toast.LENGTH_SHORT).show();
+                        switch (item.getItemId()) {
+                            case R.id.remove:
+                                telegramApiService.deleteMessage("deleteMessage", token.getText().toString(), updateModel.getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                    @Override
+                                    public void onError(String message) {
+                                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onResponse(String message) {
+                                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                             return true;
+                            case R.id.block_user:
+                                Toast.makeText(MainActivity.this, "block user " + updateModel.getText(), Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.forward:
+                                Toast.makeText(MainActivity.this, "forward msg " + updateModel.getText(), Toast.LENGTH_SHORT).show();
+                                return true;
+                        }
+                        Toast.makeText(MainActivity.this, item.getItemId(), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
@@ -151,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 @Override
                 public void onResponse(List<UpdateModel> updatesList) {
+                    responseUpdatesList = updatesList;
                     ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
                     responseListView.setAdapter(arrayAdapter);
                 }

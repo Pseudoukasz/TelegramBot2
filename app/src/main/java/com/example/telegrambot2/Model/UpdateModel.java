@@ -1,5 +1,7 @@
 package com.example.telegrambot2.Model;
 
+import java.util.Date;
+
 public class UpdateModel {
 
     private int update_id;
@@ -86,8 +88,8 @@ public class UpdateModel {
     @Override
     public String toString() {
         return "Chat Name=" + chat_title + System.getProperty("line.separator") +
-                "User name=" + chat_user_name + System.getProperty("line.separator") +
+                "Message Id=" + message_id + System.getProperty("line.separator") +
                 "Message=" + text + System.getProperty("line.separator") +
-                "Date=" + date_time;
+                "Date=" + new Date(date_time);
     }
 }
