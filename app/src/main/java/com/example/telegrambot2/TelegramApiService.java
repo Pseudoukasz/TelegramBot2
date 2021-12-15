@@ -311,7 +311,65 @@ public class TelegramApiService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Response", "Response error: " + error.toString());
-                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                stringResponseListener.onError("Something wrong:" + error.toString());
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
+    public void pinToTopMessage(String endpoint, String token, String chatId, Integer messageId, StringResponseListener stringResponseListener) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token + "&chat_id=" + chatId + "&message_id=" + messageId;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject responseChatMessage = null;
+                String responseMessage = "Message pined to top";
+
+                /*try {
+                    responseChatMessage = response.getJSONObject("chat");
+                    responseMessage += responseChatMessage.getString("title") + " chat";
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                stringResponseListener.onResponse(responseMessage);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString());
+                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                stringResponseListener.onError("Something wrong:" + error.toString());
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
+    public void forwardMessage(String endpoint, String token, String fromChatId, String chatId, Integer messageId, StringResponseListener stringResponseListener) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token + "&from_chat_id=" + fromChatId + "&chat_id=" + chatId + "&message_id=" + messageId;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject responseChatMessage = null;
+                String responseMessage = "Message forwarded";
+
+                /*try {
+                    responseChatMessage = response.getJSONObject("chat");
+                    responseMessage += responseChatMessage.getString("title") + " chat";
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                stringResponseListener.onResponse(responseMessage);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString());
+                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                 stringResponseListener.onError("Something wrong:" + error.toString());
             }
         });

@@ -6,9 +6,9 @@
         android:id="@+id/remove"
         android:title="Remove" />
     <item
-        android:id="@+id/block_user"
-        android:title="Block User" />
-    <item
         android:id="@+id/forward"
         android:title="Forward" />
+    <item
+        android:id="@+id/pinToTop"
+        android:title="Pin to top" />
 </menu>

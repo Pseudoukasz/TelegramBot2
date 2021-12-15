@@ -19,6 +19,7 @@ import com.example.telegrambot2.Model.ChatShowModel;
 import com.example.telegrambot2.Model.UpdateModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     List<ChatModel> allChatsList = new ArrayList<>();
     List<UpdateModel> responseUpdatesList = new ArrayList<>();
     final TelegramApiService telegramApiService = new TelegramApiService(MainActivity.this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int pos = parent.getPositionForView(view);
                 UpdateModel updateModel = responseUpdatesList.get(pos);
-                Toast.makeText(getApplicationContext(),pos+" " + updateModel.getText(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), pos + " " + updateModel.getText(), Toast.LENGTH_SHORT).show();
                 PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
                 popupMenu.show();
@@ -127,12 +129,47 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                     }
                                 });
 
-                             return true;
-                            case R.id.block_user:
-                                Toast.makeText(MainActivity.this, "block user " + updateModel.getText(), Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.forward:
-                                Toast.makeText(MainActivity.this, "forward msg " + updateModel.getText(), Toast.LENGTH_SHORT).show();
+                                PopupMenu chatMenu = new PopupMenu(MainActivity.this, view);
+                                for (int i = 0; i < allChatsList.size(); i++) {
+                                    chatMenu.getMenu().add(i, i, i, allChatsList.get(i).getTitle());
+                                }
+                                chatMenu.show();
+                                chatMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        telegramApiService.forwardMessage("forwardMessage", token.getText().toString(), updateModel.getChatId(), allChatsList.get(item.getItemId()).getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                            @Override
+                                            public void onError(String message) {
+                                                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onResponse(String message) {
+                                                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                        //Toast.makeText(MainActivity.this, "forward msg " + updateModel.getText() + item.getItemId(), Toast.LENGTH_SHORT).show();
+
+                                        return false;
+                                    }
+                                });
+                                //Toast.makeText(MainActivity.this, "forward msg " + updateModel.getText(), Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.pinToTop:
+                                telegramApiService.pinToTopMessage("pinChatMessage", token.getText().toString(), updateModel.getChatId(),updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                    @Override
+                                    public void onError(String message) {
+                                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onResponse(String message) {
+                                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                                 return true;
                         }
                         Toast.makeText(MainActivity.this, item.getItemId(), Toast.LENGTH_SHORT).show();
@@ -185,12 +222,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             telegramApiService.getAllChats("getAllChats", token.getText().toString(), new TelegramApiService.ChatsListInterface() {
                 @Override
                 public void onError(String message) {
-                   Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onResponse(List<ChatShowModel> allChats) {
-                    for (int i=0; i<allChats.size(); i++) {
+                    for (int i = 0; i < allChats.size(); i++) {
                         ChatModel chatInfo = new ChatModel();
                         chatInfo.setChatId(allChats.get(i).getChatId());
                         chatInfo.setTitle(allChats.get(i).getTitle());
