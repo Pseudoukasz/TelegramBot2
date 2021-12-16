@@ -4,11 +4,13 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.example.telegrambot2.Model.ChatShowModel;
 import com.example.telegrambot2.Model.UpdateModel;
 import com.example.telegrambot2.Model.WeatherReportModel;
@@ -356,6 +358,34 @@ public class TelegramApiService {
                 JSONObject responseChatMessage = null;
                 String responseMessage = "Message forwarded";
 
+                /*try {
+                    responseChatMessage = response.getJSONObject("chat");
+                    responseMessage += responseChatMessage.getString("title") + " chat";
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                stringResponseListener.onResponse(responseMessage);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString());
+                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                stringResponseListener.onError("Something wrong:" + error.toString());
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
+    public void setChatDescription(String endpoint, String token, String chatId, String description, StringResponseListener stringResponseListener) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token + "&chat_id=" + chatId + "&description=" + description;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject responseChatMessage = null;
+                String responseMessage = "Description set ";
                 /*try {
                     responseChatMessage = response.getJSONObject("chat");
                     responseMessage += responseChatMessage.getString("title") + " chat";

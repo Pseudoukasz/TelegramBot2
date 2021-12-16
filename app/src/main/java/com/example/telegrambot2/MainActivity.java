@@ -1,14 +1,17 @@
 package com.example.telegrambot2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import com.example.telegrambot2.Model.ChatModel;
 import com.example.telegrambot2.Model.ChatShowModel;
 import com.example.telegrambot2.Model.UpdateModel;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +28,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    Button button, button2, button3, sendMessageButton;
-    EditText token, messageEditText;
+    Button button, button2, button3, sendMessageButton, setChatDescriptionButton, sendPollButton, addPollOptionButton, sendPoll2;
+    int optionCount = 1;
+    EditText token, messageEditText, descriptionEditText;
+    TextInputLayout pollOptionsLayout;
     ListView responseListView;
     Spinner spinnerEndpointList, chatsListSpinner;
     List<ChatModel> allChatsList = new ArrayList<>();
@@ -46,6 +52,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         responseListView = findViewById(R.id.response);
         spinnerEndpointList = findViewById(R.id.endpoint_list);
         sendMessageButton = findViewById(R.id.sendMessageButton);
+        setChatDescriptionButton = findViewById(R.id.setChatDescriptionButton);
+        descriptionEditText = findViewById(R.id.description);
+        sendPollButton = findViewById(R.id.sendPoll);
+        addPollOptionButton = findViewById(R.id.addPoolOption);
+        pollOptionsLayout = findViewById(R.id.pollOptions);
         spinnerEndpointList.setOnItemSelectedListener(this);
 
         String[] endpointsList = getResources().getStringArray(R.array.endpoint_list);
@@ -73,20 +84,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });*/
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
                 ChatModel chat = (ChatModel) chatsListSpinner.getSelectedItem();
                 Toast.makeText(MainActivity.this, chat.getChatId() + ", " + chat.getTitle(), Toast.LENGTH_LONG).show();
-                //Toast.makeText(MainActivity.this, allChatsList.get(chatNameIndex).getChatId(), Toast.LENGTH_LONG).show();
-                //Log.e("Response", "id: " + chatNameIndex + "chat: " + allChatsList.get(chatNameIndex).toString());
                 telegramApiService.sendMessage("sandMessage", token.getText().toString(), chat.getChatId(), messageEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
                     @Override
                     public void onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
-
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        setChatDescriptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChatModel chat = (ChatModel) chatsListSpinner.getSelectedItem();
+                telegramApiService.setChatDescription("setChatDescription", token.getText().toString(), chat.getChatId(), descriptionEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
@@ -95,6 +117,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 });
             }
         });
+        addPollOptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText pollOptionEdit = new EditText(MainActivity.this);
+                pollOptionEdit.setVisibility(View.VISIBLE);
+                pollOptionEdit.setHint("Option " + optionCount);
+                //pollOptionEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+                pollOptionEdit.setClickable(true);
+                pollOptionEdit.setFocusable(true);
+
+                pollOptionsLayout.addView(pollOptionEdit, optionCount);
+                //pollOptionsLayout.addView(pollOptionEdit);
+                optionCount++;
+
+            }
+        });
+        //pollOptionsLayout.set
         /*button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,6 +225,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         messageEditText.setVisibility(View.GONE);
         chatsListSpinner.setVisibility(View.GONE);
         sendMessageButton.setVisibility(View.GONE);
+        setChatDescriptionButton.setVisibility(View.GONE);
+        descriptionEditText.setVisibility(View.GONE);
+        responseListView.setVisibility(View.VISIBLE);
+        sendPollButton.setVisibility(View.GONE);
+        addPollOptionButton.setVisibility(View.GONE);
+        pollOptionsLayout.setVisibility(View.GONE);
 
         //Toast.makeText(MainActivity.this, "selected = " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
         String spinnerValue = parent.getItemAtPosition(position).toString();
@@ -242,44 +287,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
 
         } else if (spinnerValue.equals("Sand Message")) {
-            /*List<String> chatsSpinnerList = new ArrayList<String>();
-            for (int i = 0; i< allChatsList.size(); i++) {
-                chatsSpinnerList.add(allChatsList.get(i).getTitle());
-            }*/
             ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
             //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
             chatsListSpinner.setAdapter(chatsAdapter);
             messageEditText.setVisibility(View.VISIBLE);
             chatsListSpinner.setVisibility(View.VISIBLE);
             sendMessageButton.setVisibility(View.VISIBLE);
+            responseListView.setVisibility(View.GONE);
 
 
-           /* telegramApiService.sendMessage("sandMessage", token.getText().toString(), "-1001675185962", "1111", new TelegramApiService.StringResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-                }
+        } else if (spinnerValue.equals("Set Chat Description")) {
+            ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
+            //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
+            chatsListSpinner.setAdapter(chatsAdapter);
+            descriptionEditText.setVisibility(View.VISIBLE);
+            chatsListSpinner.setVisibility(View.VISIBLE);
+            setChatDescriptionButton.setVisibility(View.VISIBLE);
+            responseListView.setVisibility(View.GONE);
 
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
-                }
-            });*/
-
-        } /*else if (spinnerValue.equals("Forward Message")) {
-            telegramApiService.checkConnection("forwardMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } else if (spinnerValue.equals("Delete Message")) {
+        }else if (spinnerValue.equals("Make Poll")) {
+            ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
+            chatsListSpinner.setAdapter(chatsAdapter);
+            chatsListSpinner.setVisibility(View.VISIBLE);
+            sendPollButton.setVisibility(View.VISIBLE);
+            addPollOptionButton.setVisibility(View.VISIBLE);
+            pollOptionsLayout.setVisibility(View.VISIBLE);
+            responseListView.setVisibility(View.GONE);
+        } /*else if (spinnerValue.equals("Delete Message")) {
             telegramApiService.checkConnection("deleteMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
                 @Override
                 public void onError(String message) {
@@ -346,4 +380,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+    public void doo(View view) {
+        Toast.makeText(MainActivity.this, "traasd", Toast.LENGTH_LONG );
+    }
 }

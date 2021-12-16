@@ -54,8 +54,7 @@
         android:layout_height="41dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/method"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/method" />
 
     <Spinner
         android:id="@+id/chat_list"
@@ -64,8 +63,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/endpoint_list"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/endpoint_list" />
 
     <EditText
         android:id="@+id/message"
@@ -90,6 +88,70 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message"
 
+        />
+
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textLongMessage"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_list" />
+
+    <Button
+        android:id="@+id/setChatDescriptionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Description"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description"
+
+        />
+
+    <Button
+        android:id="@+id/addPoolOption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Poll Option"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_list"
+
+        />
+
+    <LinearLayout
+        android:id="@+id/pollOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addPoolOption"
+
+        >
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/sendPoll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Poll"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pollOptions"
 
         />
 
