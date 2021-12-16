@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button button, button2, button3, sendMessageButton, setChatDescriptionButton, sendPollButton, addPollOptionButton, sendPoll2;
     int optionCount = 1;
     EditText token, messageEditText, descriptionEditText;
-    TextInputLayout pollOptionsLayout;
+    LinearLayout pollOptionsLayout;
     ListView responseListView;
     Spinner spinnerEndpointList, chatsListSpinner;
     List<ChatModel> allChatsList = new ArrayList<>();
