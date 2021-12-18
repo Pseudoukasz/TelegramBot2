@@ -125,9 +125,6 @@ public class TelegramApiService {
         MySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    /*public List<WeatherReportModel> getCityForecastByName(String cityName) {
-
-    }*/
     public interface BotInfoInterface {
         void onError(String message);
 

@@ -191,6 +191,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="Question"
         android:background="#FFFFFF"
@@ -206,9 +208,12 @@
         android:isScrollContainer="true"
         android:orientation="vertical"
         android:visibility="visible"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pollQuestion">
+        app:layout_constraintTop_toBottomOf="@id/questionInputLayout">
 
     </LinearLayout>
 
@@ -218,6 +223,8 @@
         android:layout_width="409dp"
         android:layout_height="632dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
