@@ -114,6 +114,17 @@
         app:layout_constraintTop_toBottomOf="@id/description"
 
         />
+    <Button
+        android:id="@+id/sendPoll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Poll"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_list"
+
+        />
 
     <Button
         android:id="@+id/addPoolOption"
@@ -123,37 +134,38 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chat_list"
+        app:layout_constraintTop_toBottomOf="@id/sendPoll"
 
         />
 
-    <LinearLayout
-        android:id="@+id/pollOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addPoolOption"
-
-        >
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/sendPoll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Poll"
+    <EditText
+        android:id="@+id/pollQuestion"
+        android:layout_width="0dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Question"
+        android:inputType="textLongMessage"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pollOptions"
+        app:layout_constraintTop_toBottomOf="@id/addPoolOption" />
 
-        />
+        <LinearLayout
+            android:id="@+id/pollOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pollQuestion"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+        </LinearLayout>
+
+
+
 
     <ListView
         android:id="@+id/response"
@@ -162,6 +174,7 @@
         android:layout_marginTop="8dp"
         android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sendMessageButton" />
 

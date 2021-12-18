@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TelegramApiService {
@@ -188,15 +189,18 @@ public class TelegramApiService {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject update = response.getJSONObject(i);
-                        UpdateModel updateModel = new UpdateModel();
-                        updateModel.setUpdateId(update.getInt("update_id"));
-                        updateModel.setMessageId(update.getJSONObject("channel_post").getInt("message_id"));
-                        updateModel.setChatTitle(update.getJSONObject("channel_post").getJSONObject("chat").getString("title"));
-                        updateModel.setChatUserName(update.getJSONObject("channel_post").getJSONObject("chat").getString("username"));
-                        updateModel.setChatId(update.getJSONObject("channel_post").getJSONObject("chat").getString("id"));
-                        updateModel.setDateTime(update.getJSONObject("channel_post").getInt("date"));
-                        updateModel.setText(update.getJSONObject("channel_post").getString("text"));
-                        updates.add(updateModel);
+                        if (update.has("channel_post")) {
+                            UpdateModel updateModel = new UpdateModel();
+                            updateModel.setUpdateId(update.getInt("update_id"));
+                            updateModel.setMessageId(update.getJSONObject("channel_post").getInt("message_id"));
+                            updateModel.setChatTitle(update.getJSONObject("channel_post").getJSONObject("chat").getString("title"));
+                            updateModel.setChatUserName(update.getJSONObject("channel_post").getJSONObject("chat").getString("username"));
+                            updateModel.setChatId(update.getJSONObject("channel_post").getJSONObject("chat").getString("id"));
+                            updateModel.setDateTime(update.getJSONObject("channel_post").getInt("date"));
+                            updateModel.setText(update.getJSONObject("channel_post").getString("text"));
+                            updates.add(updateModel);
+                        }
+
                     }
 
                 } catch (JSONException e) {
@@ -342,7 +346,6 @@ public class TelegramApiService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Response", "Response error: " + error.toString());
-                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                 stringResponseListener.onError("Something wrong:" + error.toString());
             }
         });
@@ -371,7 +374,6 @@ public class TelegramApiService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Response", "Response error: " + error.toString());
-                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                 stringResponseListener.onError("Something wrong:" + error.toString());
             }
         });
@@ -399,7 +401,33 @@ public class TelegramApiService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Response", "Response error: " + error.toString());
-                //Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                stringResponseListener.onError("Something wrong:" + error.toString());
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
+    public void sendPoll(String endpoint, String token, String chatId, String question, JSONObject options, StringResponseListener stringResponseListener) {
+        String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token + "&chat_id=" + chatId + "&question=" + question;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, options, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject responseChatMessage = null;
+                String responseMessage = "Poll created";
+                /*try {
+                    responseChatMessage = response.getJSONObject("chat");
+                    responseMessage += responseChatMessage.getString("title") + " chat";
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                stringResponseListener.onResponse(responseMessage);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response", "Response error: " + error.toString());
                 stringResponseListener.onError("Something wrong:" + error.toString());
             }
         });
