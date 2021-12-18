@@ -1,12 +1,10 @@
 package com.example.telegrambot2;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button button, button2, button3, sendMessageButton, setChatDescriptionButton, sendPollButton, addPollOptionButton;
     int optionCount = 1;
     EditText token, messageEditText, descriptionEditText, pollQuestionEditText;
+    TextInputLayout messageTextInputLayout, descriptionInputLayout, pollQuestionInputLayout;
     LinearLayout pollOptionsLayout;
     ListView responseListView;
     Spinner spinnerEndpointList, chatsListSpinner;
@@ -64,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         addPollOptionButton = findViewById(R.id.addPoolOption);
         pollOptionsLayout = findViewById(R.id.pollOptions);
         pollQuestionEditText = findViewById(R.id.pollQuestion);
+        messageTextInputLayout = findViewById(R.id.messageInputLayout);
+        descriptionInputLayout = findViewById(R.id.descriptionInputLayout);
+        pollQuestionInputLayout = findViewById(R.id.questionInputLayout);
         spinnerEndpointList.setOnItemSelectedListener(this);
 
         String[] endpointsList = getResources().getStringArray(R.array.endpoint_list);
@@ -71,25 +73,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEndpointList.setAdapter(adapter);
 
-        /*button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                telegramApiService.getCityId(token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(MainActivity.this, "wrong", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onResponse(String cityId) {
-                        Toast.makeText(MainActivity.this, "Returned id = " + cityId, Toast.LENGTH_LONG).show();
-                    }
-                });
-
-
-            }
-        });*/
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,16 +233,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        messageEditText.setVisibility(View.GONE);
+        //messageEditText.setVisibility(View.GONE);
         chatsListSpinner.setVisibility(View.GONE);
         sendMessageButton.setVisibility(View.GONE);
         setChatDescriptionButton.setVisibility(View.GONE);
-        descriptionEditText.setVisibility(View.GONE);
+        //descriptionEditText.setVisibility(View.GONE);
         responseListView.setVisibility(View.VISIBLE);
         sendPollButton.setVisibility(View.GONE);
         addPollOptionButton.setVisibility(View.GONE);
         pollOptionsLayout.setVisibility(View.GONE);
-        pollQuestionEditText.setVisibility(View.GONE);
+        pollQuestionInputLayout.setVisibility(View.GONE);
+        messageTextInputLayout.setVisibility(View.GONE);
+        descriptionInputLayout.setVisibility(View.GONE);
 
         String spinnerValue = parent.getItemAtPosition(position).toString();
         if (spinnerValue.equals("Check connection")) {
@@ -318,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
             //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
             chatsListSpinner.setAdapter(chatsAdapter);
-            messageEditText.setVisibility(View.VISIBLE);
+            messageTextInputLayout.setVisibility(View.VISIBLE);
             chatsListSpinner.setVisibility(View.VISIBLE);
             sendMessageButton.setVisibility(View.VISIBLE);
             responseListView.setVisibility(View.GONE);
@@ -328,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             ArrayAdapter<ChatModel> chatsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, allChatsList);
             //SpinnerAdapter chatsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, chatsSpinnerList);
             chatsListSpinner.setAdapter(chatsAdapter);
-            descriptionEditText.setVisibility(View.VISIBLE);
+            descriptionInputLayout.setVisibility(View.VISIBLE);
             chatsListSpinner.setVisibility(View.VISIBLE);
             setChatDescriptionButton.setVisibility(View.VISIBLE);
             responseListView.setVisibility(View.GONE);
@@ -341,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             addPollOptionButton.setVisibility(View.VISIBLE);
             pollOptionsLayout.setVisibility(View.VISIBLE);
             responseListView.setVisibility(View.GONE);
-            pollQuestionEditText.setVisibility(View.VISIBLE);
+            pollQuestionInputLayout.setVisibility(View.VISIBLE);
         } /*else if (spinnerValue.equals("Delete Message")) {
             telegramApiService.checkConnection("deleteMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
                 @Override
