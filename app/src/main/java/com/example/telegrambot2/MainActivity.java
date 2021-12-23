@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.telegrambot2.Adapter.UpdateAdapter;
 import com.example.telegrambot2.Model.ChatModel;
 import com.example.telegrambot2.Model.ChatShowModel;
 import com.example.telegrambot2.Model.UpdateModel;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     Button button, button2, button3, sendMessageButton, setChatDescriptionButton, sendPollButton, addPollOptionButton;
     int optionCount = 1;
-    EditText token, messageEditText, descriptionEditText, pollQuestionEditText;
+    EditText tokenEditText, messageEditText, descriptionEditText, pollQuestionEditText;
     TextInputLayout messageTextInputLayout, descriptionInputLayout, pollQuestionInputLayout;
     LinearLayout pollOptionsLayout;
     ListView responseListView;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //button3 = findViewById(R.id.button3);
         chatsListSpinner = findViewById(R.id.chat_list);
         messageEditText = findViewById(R.id.message);
-        token = findViewById(R.id.method);
+        tokenEditText = findViewById(R.id.method);
         responseListView = findViewById(R.id.response);
         spinnerEndpointList = findViewById(R.id.endpoint_list);
         sendMessageButton = findViewById(R.id.sendMessageButton);
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 ChatModel chat = (ChatModel) chatsListSpinner.getSelectedItem();
                 Toast.makeText(MainActivity.this, chat.getChatId() + ", " + chat.getTitle(), Toast.LENGTH_LONG).show();
-                telegramApiService.sendMessage("sandMessage", token.getText().toString(), chat.getChatId(), messageEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
+                telegramApiService.sendMessage("sandMessage", tokenEditText.getText().toString(), chat.getChatId(), messageEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
                     @Override
                     public void onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 ChatModel chat = (ChatModel) chatsListSpinner.getSelectedItem();
-                telegramApiService.setChatDescription("setChatDescription", token.getText().toString(), chat.getChatId(), descriptionEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
+                telegramApiService.setChatDescription("setChatDescription", tokenEditText.getText().toString(), chat.getChatId(), descriptionEditText.getText().toString(), new TelegramApiService.StringResponseListener() {
                     @Override
                     public void onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -140,8 +141,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                     }
                 }
-                //JSONObject options5 = new JSONObject(params);
-                telegramApiService.sendPoll("makePoll", token.getText().toString(), chat.getChatId(), pollQuestionEditText.getText().toString(), options, new TelegramApiService.StringResponseListener() {
+                telegramApiService.sendPoll("makePoll", tokenEditText.getText().toString(), chat.getChatId(), pollQuestionEditText.getText().toString(), options, new TelegramApiService.StringResponseListener() {
                     @Override
                     public void onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.remove:
-                                telegramApiService.deleteMessage("deleteMessage", token.getText().toString(), updateModel.getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                telegramApiService.deleteMessage("deleteMessage", tokenEditText.getText().toString(), updateModel.getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
                                     @Override
                                     public void onError(String message) {
                                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 chatMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                     @Override
                                     public boolean onMenuItemClick(MenuItem item) {
-                                        telegramApiService.forwardMessage("forwardMessage", token.getText().toString(), updateModel.getChatId(), allChatsList.get(item.getItemId()).getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                        telegramApiService.forwardMessage("forwardMessage", tokenEditText.getText().toString(), updateModel.getChatId(), allChatsList.get(item.getItemId()).getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
                                             @Override
                                             public void onError(String message) {
                                                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 });
                                 return true;
                             case R.id.pinToTop:
-                                telegramApiService.pinToTopMessage("pinChatMessage", token.getText().toString(), updateModel.getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
+                                telegramApiService.pinToTopMessage("pinChatMessage", tokenEditText.getText().toString(), updateModel.getChatId(), updateModel.getMessageId(), new TelegramApiService.StringResponseListener() {
                                     @Override
                                     public void onError(String message) {
                                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -233,11 +233,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //messageEditText.setVisibility(View.GONE);
         chatsListSpinner.setVisibility(View.GONE);
         sendMessageButton.setVisibility(View.GONE);
         setChatDescriptionButton.setVisibility(View.GONE);
-        //descriptionEditText.setVisibility(View.GONE);
         responseListView.setVisibility(View.VISIBLE);
         sendPollButton.setVisibility(View.GONE);
         addPollOptionButton.setVisibility(View.GONE);
@@ -248,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         String spinnerValue = parent.getItemAtPosition(position).toString();
         if (spinnerValue.equals("Check connection")) {
-            telegramApiService.checkConnection("getBotInfo", token.getText().toString(), new TelegramApiService.BotInfoInterface() {
+            telegramApiService.checkConnection("getBotInfo", tokenEditText.getText().toString(), new TelegramApiService.BotInfoInterface() {
                 @Override
                 public void onError(String message) {
                     Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
@@ -262,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             });
         } else if (spinnerValue.equals("Get Updates")) {
-            telegramApiService.getUpdates("getUpdates", token.getText().toString(), new TelegramApiService.UpdateList() {
+            telegramApiService.getUpdates("getUpdates", tokenEditText.getText().toString(), new TelegramApiService.UpdateList() {
                 @Override
                 public void onError(String message) {
                     //Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
@@ -271,13 +269,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public void onResponse(List<UpdateModel> updatesList) {
                     responseUpdatesList = updatesList;
+                    UpdateAdapter updateAdapter = new UpdateAdapter(MainActivity.this, updatesList, allChatsList, tokenEditText.getText().toString());
                     ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
-                    responseListView.setAdapter(arrayAdapter);
+                    //responseListView.setAdapter(arrayAdapter);
+                    responseListView.setAdapter(updateAdapter);
                 }
             });
 
         } else if (spinnerValue.equals("Get All Channels")) {
-            telegramApiService.getAllChats("getAllChats", token.getText().toString(), new TelegramApiService.ChatsListInterface() {
+            telegramApiService.getAllChats("getAllChats", tokenEditText.getText().toString(), new TelegramApiService.ChatsListInterface() {
                 @Override
                 public void onError(String message) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -327,60 +327,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             pollOptionsLayout.setVisibility(View.VISIBLE);
             responseListView.setVisibility(View.GONE);
             pollQuestionInputLayout.setVisibility(View.VISIBLE);
-        } /*else if (spinnerValue.equals("Delete Message")) {
-            telegramApiService.checkConnection("deleteMessage", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } else if (spinnerValue.equals("Create Invite Link")) {
-            telegramApiService.checkConnection("sendInvite", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
-                }
-            });
-
-        } else if (spinnerValue.equals("Make Poll")) {
-            telegramApiService.checkConnection("makePoll", token.getText().toString(), new TelegramApiService.ValleyResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "wrong, " + message, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(MainActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
-                }
-            });
-
-        }*/
-
-       /* telegramApiService.getCityForecastById(method.getText().toString(), new TelegramApiService.ForecastByIdResponse() {
-            @Override
-            public void onError(String message) {
-                Toast.makeText(MainActivity.this, "wrong", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onResponse(List<WeatherReportModel> weatherReportModels) {
-                //Toast.makeText(MainActivity.this, "Returned id = " + weatherReportModels.toString(), Toast.LENGTH_LONG).show();
-                ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
-                response.setAdapter(arrayAdapter);
-            }
-        });*/
+        }
     }
 
     @Override
@@ -395,6 +342,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     public void doo(View view) {
-        Toast.makeText(MainActivity.this, "traasd", Toast.LENGTH_LONG);
+        Toast.makeText(MainActivity.this, "traasd", Toast.LENGTH_LONG).show();
     }
 }

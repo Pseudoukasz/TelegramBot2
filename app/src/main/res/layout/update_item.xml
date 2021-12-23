@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,16 +7,49 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent" >
-<TextView
-    android:id="@+id/tvName"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Name" />
-<TextView
-    android:id="@+id/tvHome"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="HomeTown" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/chatNameDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="Name"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/messageDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="HomeTown" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/messageDateDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="Date" />
+
+    <TextView
+        android:id="@+id/updateItemMessageId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text=""
+        />
+
+
 </LinearLayout>
