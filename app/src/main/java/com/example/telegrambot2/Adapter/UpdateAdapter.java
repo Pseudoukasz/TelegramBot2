@@ -1,6 +1,9 @@
 package com.example.telegrambot2.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,13 +14,18 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.telegrambot2.MainActivity;
 import com.example.telegrambot2.Model.ChatModel;
 import com.example.telegrambot2.Model.UpdateModel;
 import com.example.telegrambot2.R;
 import com.example.telegrambot2.TelegramApiService;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UpdateAdapter extends ArrayAdapter<UpdateModel> {
@@ -34,29 +42,30 @@ public class UpdateAdapter extends ArrayAdapter<UpdateModel> {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         UpdateModel updateModel = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.update_item, parent, false);
         }
-
         TextView chatNameDisplay = (TextView) convertView.findViewById(R.id.chatNameDisplay);
         TextView messageDisplay = (TextView) convertView.findViewById(R.id.messageDisplay);
         TextView messageDateDisplay = (TextView) convertView.findViewById(R.id.messageDateDisplay);
         TextView updateItemMessageId = (TextView) convertView.findViewById(R.id.updateItemMessageId);
 
+        Timestamp timestamp = new Timestamp(updateModel.getDateTime() * 1000);
+        Date updateDate = new Date(timestamp.getTime());
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = dateFormat.format(updateDate);
         chatNameDisplay.setText(updateModel.getChatTitle());
         messageDisplay.setText(updateModel.getText());
-        // messageDateDisplay.setText(updateModel.getDateTime());
+        messageDateDisplay.setText(date);
         convertView.setTag(updateModel);
-
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 UpdateModel updateModel = (UpdateModel) view.getTag();
-                Toast.makeText(getContext(), updateModel.getText(), Toast.LENGTH_SHORT).show();
                 PopupMenu popupMenu = new PopupMenu(getContext(), view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
                 popupMenu.show();

@@ -9,7 +9,7 @@ public class UpdateModel {
     private String chat_id;
     private String chat_title;
     private String chat_user_name;
-    private int date_time;
+    private long date_time;
     private String text;
 
     public UpdateModel() {
@@ -69,11 +69,11 @@ public class UpdateModel {
         this.chat_user_name = chat_user_name;
     }
 
-    public int getDateTime() {
+    public long getDateTime() {
         return date_time;
     }
 
-    public void setDateTime(int date_time) {
+    public void setDateTime(long date_time) {
         this.date_time = date_time;
     }
 

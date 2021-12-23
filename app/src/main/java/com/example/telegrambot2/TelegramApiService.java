@@ -177,11 +177,9 @@ public class TelegramApiService {
 
     public void getUpdates(String endpoint, String token, UpdateList updateList) {
         String url2 = BASE_API_ADDRESS + endpoint + "?token=" + token;
-        //Toast.makeText(context, "url = " + url2, Toast.LENGTH_LONG).show();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url2, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-
                 List<UpdateModel> updates = new ArrayList<>();
                 try {
                     for (int i = 0; i < response.length(); i++) {
@@ -193,13 +191,11 @@ public class TelegramApiService {
                             updateModel.setChatTitle(update.getJSONObject("channel_post").getJSONObject("chat").getString("title"));
                             updateModel.setChatUserName(update.getJSONObject("channel_post").getJSONObject("chat").getString("username"));
                             updateModel.setChatId(update.getJSONObject("channel_post").getJSONObject("chat").getString("id"));
-                            updateModel.setDateTime(update.getJSONObject("channel_post").getInt("date"));
+                            updateModel.setDateTime(Integer.parseInt(update.getJSONObject("channel_post").getString("date")));
                             updateModel.setText(update.getJSONObject("channel_post").getString("text"));
                             updates.add(updateModel);
                         }
-
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
