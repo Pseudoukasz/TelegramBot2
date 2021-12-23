@@ -285,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 @Override
                 public void onResponse(List<ChatShowModel> allChats) {
+                    allChatsList.clear();
                     for (int i = 0; i < allChats.size(); i++) {
                         ChatModel chatInfo = new ChatModel();
                         chatInfo.setChatId(allChats.get(i).getChatId());

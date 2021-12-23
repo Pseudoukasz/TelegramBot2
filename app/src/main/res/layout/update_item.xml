@@ -19,29 +19,26 @@
         android:layout_marginLeft="3sp"
         android:text="Name"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/messageDisplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3sp"
-        android:text="HomeTown" />
-
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="92dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="3sp"
-        android:text="TextView" />
+        android:text="HomeTown"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/messageDateDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3sp"
-        android:text="Date" />
+        android:layout_marginBottom="3sp"
+        android:layout_marginTop="8sp"
+        android:text="Date"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/updateItemMessageId"
