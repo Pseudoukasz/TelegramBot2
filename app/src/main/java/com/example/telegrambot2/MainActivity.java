@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.telegrambot2.Adapter.ChatAdapter;
 import com.example.telegrambot2.Adapter.UpdateAdapter;
 import com.example.telegrambot2.Model.ChatModel;
 import com.example.telegrambot2.Model.ChatShowModel;
@@ -155,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         optionCount = 1;
                     }
                 });
-                Toast.makeText(MainActivity.this, options.toString(), Toast.LENGTH_LONG).show();
             }
         });
         responseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                 return true;
                         }
-                        Toast.makeText(MainActivity.this, item.getItemId(), Toast.LENGTH_SHORT).show();
+
                         return false;
                     }
                 });
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         descriptionInputLayout.setVisibility(View.GONE);
 
         String spinnerValue = parent.getItemAtPosition(position).toString();
-        if (spinnerValue.equals("Check connection")) {
+        if (spinnerValue.equals("Check connection") && tokenEditText.getText().toString().length() != 0) {
             telegramApiService.checkConnection("getBotInfo", tokenEditText.getText().toString(), new TelegramApiService.BotInfoInterface() {
                 @Override
                 public void onError(String message) {
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onResponse(List<UpdateModel> updatesList) {
                     responseUpdatesList = updatesList;
                     UpdateAdapter updateAdapter = new UpdateAdapter(MainActivity.this, updatesList, allChatsList, tokenEditText.getText().toString());
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
+                    //ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, updatesList);
                     //responseListView.setAdapter(arrayAdapter);
                     responseListView.setAdapter(updateAdapter);
                 }
@@ -295,8 +295,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     //allChatsList = allChats;
                     //SpinnerAdapter
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
-                    responseListView.setAdapter(arrayAdapter);
+                    ChatAdapter chatAdapter = new ChatAdapter(MainActivity.this, allChatsList);
+                    //ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, allChats);
+                    responseListView.setAdapter(chatAdapter);
                 }
             });
 

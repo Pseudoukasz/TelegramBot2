@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/chatListNameDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="Name"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/chatIdDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="HomeTown"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/chatLinkDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3sp"
+        android:text="HomeTown"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/copyChatLink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3sp"
+        android:layout_marginLeft="40sp"
+        android:layout_marginRight="40sp"
+        android:text="Copy Chat Link" />
+
+
+</LinearLayout>
